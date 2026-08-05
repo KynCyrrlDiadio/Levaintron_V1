@@ -1,0 +1,5 @@
+# Levaintron demo pipeline
+torch>=2.0
+selenium>=4.10
+psycopg2-binary>=2.9
+pytz>=2023.3

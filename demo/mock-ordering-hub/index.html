@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bread Store Demo — Ordering Hub</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Top nav: brand avatar + centered section tabs (real-portal arrangement) -->
+  <header class="topnav">
+    <div class="nav-left">
+      <div class="nav-avatar"><span class="logo-dot"></span></div>
+      <div class="lang"><span class="lang-en">EN</span><span class="lang-fr">FR</span></div>
+    </div>
+    <nav class="nav-tabs">
+      <a class="nav-tab active">Ordering Hub</a>
+      <a class="nav-tab">Reporting</a>
+      <a class="nav-tab">Useful Information</a>
+      <a class="nav-tab">Notifications</a>
+    </nav>
+    <div class="nav-right">
+      <span class="route-chip">Route <span id="route-label">Bread_dev</span></span>
+    </div>
+  </header>
+
+  <!-- Sub-tabs -->
+  <div class="subtabs">
+    <span class="subtab active">Routes</span>
+    <span class="subtab">Customers</span>
+  </div>
+
+  <!-- Controls row: route, customer picker, week picker, DOW chips, revert -->
+  <section class="controls">
+    <div class="control route-control">
+      <label class="control-label">Route</label>
+      <div class="route-select"><span id="route-value">Bread_dev</span><span class="select-arrow">▾</span></div>
+    </div>
+
+    <div class="control customer-control">
+      <label class="control-label">Customers</label>
+      <!-- Scraper anchor: input[formcontrolname='customer'] -->
+      <input
+        formcontrolname="customer"
+        class="customer-input"
+        type="text"
+        autocomplete="off"
+        placeholder="Select a store…" />
+      <!-- mat-option dropdown injected here on focus/type -->
+      <div class="customer-dropdown" id="customer-dropdown" hidden></div>
+    </div>
+
+    <!-- Scraper anchor: mat-form-field.week > mat-select[formcontrolname='week'] -->
+    <mat-form-field class="week control">
+      <mat-label>Week</mat-label>
+      <mat-select formcontrolname="week" id="week-select" role="combobox" tabindex="0">
+        <span class="week-value mat-mdc-select-value-text" id="week-value">—</span>
+        <span class="select-arrow">▾</span>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="control dow-control">
+      <label class="control-label">&nbsp;</label>
+      <div class="dow-chips" id="dow-chips"></div>
+    </div>
+
+    <div class="control revert-control">
+      <label class="control-label">&nbsp;</label>
+      <button class="revert-btn" id="revert-all">Revert All Changes</button>
+    </div>
+  </section>
+
+  <!-- Collapsed advanced panel -->
+  <div class="advanced-bar" id="advanced-bar">
+    <span class="advanced-plus" id="advanced-plus">+</span>
+    <span>Show Advanced</span>
+  </div>
+  <div class="advanced-panel" id="advanced-panel" hidden>
+    <label class="adv-opt"><input type="checkbox" /> Show inactive products</label>
+    <label class="adv-opt"><input type="checkbox" /> Show projected returns</label>
+    <label class="adv-opt"><input type="checkbox" checked /> Highlight adjustments</label>
+  </div>
+
+  <!-- The ordering grid: filter + date headers, bookmark row, product blocks,
+       grand totals. Row layout mirrors the real portal; every date/total
+       column is a .div-content.day so the scraper's layer classification
+       works unchanged. -->
+  <main class="grid-wrap">
+    <!-- Shown while a store/week switch round-trips: the grid below is torn
+         down and rebuilt, replicating the real portal's full re-render. -->
+    <div class="grid-reload" id="grid-reload" hidden>
+      <div class="reload-spinner"></div>
+      <span id="grid-reload-msg">Loading…</span>
+    </div>
+    <div class="grid" id="grid">
+      <div class="grid-row header-row">
+        <div class="left-panel filter-panel">
+          <svg class="filter-icon" viewBox="0 0 24 24" width="16" height="16"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <!-- Scraper anchor: input.filter-input -->
+          <input
+            class="filter-input"
+            type="text"
+            autocomplete="off"
+            placeholder="Filter / Search" />
+        </div>
+        <div class="day-cols" id="header-cols"></div>
+      </div>
+
+      <div class="grid-row bookmark-row">
+        <div class="left-panel po-bar">Purchase Orders</div>
+        <div class="day-cols" id="bookmark-cols"></div>
+      </div>
+
+      <div id="product-rows"></div>
+
+      <div class="grid-row gt-row">
+        <div class="left-panel gt-label">Grand Totals</div>
+        <div class="day-cols" id="gt-cols"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Overlay host mirrors Angular CDK structure for the confirm dialogs -->
+  <div class="cdk-overlay-container" id="overlay-container"></div>
+
+  <!-- Bottom action bar: green counter FAB (scraper anchor) + review actions -->
+  <footer class="bottombar">
+    <div class="bottom-left">
+      <button class="fab-up" id="scroll-top" title="Back to top">⌃</button>
+      <!-- Scraper anchor: button[mat-mini-fab].green.counter
+           > span.mat-mdc-button-touch-target -->
+      <button mat-mini-fab class="green counter" id="green-submit" title="Review pending changes">
+        <span class="mat-mdc-button-touch-target"></span>
+        <span class="count" id="pending-count">0</span>
+      </button>
+    </div>
+    <span class="status-msg" id="status-msg">Demo hub ready — fictional data, no live systems.</span>
+    <span class="capture-chip" id="capture-chip" title="Pending cells auto-commit at the daily order capture"></span>
+    <div class="bottom-right">
+      <button class="bar-btn" id="email-btn">✉ Email</button>
+      <button class="bar-btn" id="report-btn">⭳ Download Report</button>
+      <button class="bar-btn review" id="review-btn">Review</button>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
