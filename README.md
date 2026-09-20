@@ -100,10 +100,35 @@ Every production identity was re-keyed; none appear anywhere in this repo:
 | The production database | levaintron_demo |
 | The real ordering portal + session hash | Mock hub, no auth |
 
+## Dashboard (`dashboard/`)
+
+The production React + Express dashboard, scrubbed to the demo product and
+store, wired to `levaintron_demo` only.
+
+```bash
+cd dashboard
+cp .env.example .env          # DATABASE_URL (demo db), PORT=5001
+npm run db:push               # creates the dashboard-only tables (training_data, predictions, ...)
+npm run dev                   # http://127.0.0.1:5001
+```
+
+Three collision guards keep it off any production instance on the same box:
+
+- `server/load-env.ts` reads `dashboard/.env` (then `../.env`) and its values
+  **override the shell**, so an exported production `DATABASE_URL` is ignored.
+- `server/db.ts` refuses to start unless the database name is
+  `levaintron_demo` (`DEMO_ALLOW_ANY_DB=1` bypasses; don't).
+- The "Run pipeline" button spawns from the parent of `dashboard/` (this repo)
+  using `levaintron/bin/python`, never a hard-coded production path.
+  `PIPELINE_PATH` / `PYTHON_PATH` override if needed.
+
+The port is 5001 because 5000 is the production dashboard's default.
+
 ## Omitted from the demo
 
-The React dashboard, the LLM orchestrator layer (session manager / tool
+The LLM orchestrator layer (session manager / tool
 registry), the baseline grid monitor, the other 16 product configs and
-models, and all production deploy files. The pipeline path itself —
+models, and all production deploy files (systemd units, Tailscale setup,
+Beelink deploy scripts — none of them apply to a loopback demo). The pipeline path itself —
 read → token sync → multi-date MLP decisions → verified writes → submit →
 log — is complete.

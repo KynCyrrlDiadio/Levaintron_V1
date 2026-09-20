@@ -21,7 +21,7 @@ import os
 import psycopg2
 import psycopg2.extras
 
-DB_URL = os.environ.get("DATABASE_URL", "postgresql://postgres:8989@localhost:5432/ordering_db")
+DB_URL = os.environ.get("DEMO_DATABASE_URL", "postgresql://postgres:8989@127.0.0.1:5432/levaintron_demo")
 
 
 def load_product_multipliers(sku: str, store_id: str = '70012004') -> dict:

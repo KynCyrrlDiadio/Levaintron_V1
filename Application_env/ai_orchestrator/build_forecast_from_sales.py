@@ -34,7 +34,7 @@ from collections import defaultdict
 
 import psycopg2
 
-DB_URL = os.environ.get("DATABASE_URL", "postgresql://dev_driver:bread@localhost:5432/ordering_db")
+DB_URL = os.environ.get("DEMO_DATABASE_URL", "postgresql://postgres:8989@127.0.0.1:5432/levaintron_demo")
 
 DAY_ABBR = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 MONTH_NAMES = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

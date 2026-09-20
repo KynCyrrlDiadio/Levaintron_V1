@@ -4,3 +4,7 @@ __pycache__/
 levaintron/
 .idea/
 *.log
+dashboard/node_modules/
+dashboard/dist/
+dashboard/.env
+dashboard/uploads/*
